@@ -1,5 +1,6 @@
 package com.techacademy.controller;
 
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,8 @@ import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.Employee;
 import com.techacademy.service.EmployeeService;
 import com.techacademy.service.UserDetail;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequestMapping("employees")
@@ -85,7 +88,8 @@ public class EmployeeController {
             ErrorKinds result = employeeService.save(employee);
 
             if (ErrorMessage.contains(result)) {
-                model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+                model.addAttribute(ErrorMessage.getErrorName(result),
+                        ErrorMessage.getErrorValue(result));
                 return create(employee);
             }
 
@@ -98,14 +102,44 @@ public class EmployeeController {
         return "redirect:/employees";
     }
 
+    @GetMapping(value = "/{code}/update")
+    public String edit(@PathVariable("code") String code, Model model) {
+        model.addAttribute("employee", employeeService.findByCode(code));
+        return "employees/update";
+    }
+
+    @PostMapping(value = "/{code}/update")
+    public String update(@Validated Employee employee, BindingResult res, Model model) {
+        if (res.hasErrors()) {
+            return "employees/update";
+        }
+
+        Employee originalEmployee = employeeService.findByCode(employee.getCode());
+
+        LocalDateTime originalCreatedAt = originalEmployee.getCreatedAt();
+        employee.setCreatedAt(originalCreatedAt);
+
+        ErrorKinds result = employeeService.update(employee);
+
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result),
+                    ErrorMessage.getErrorValue(result));
+            return "employees/update";
+        }
+
+        return "redirect:/employees";
+    }
+
     // 従業員削除処理
     @PostMapping(value = "/{code}/delete")
-    public String delete(@PathVariable("code") String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+    public String delete(@PathVariable("code") String code,
+            @AuthenticationPrincipal UserDetail userDetail, Model model) {
 
         ErrorKinds result = employeeService.delete(code, userDetail);
 
         if (ErrorMessage.contains(result)) {
-            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute(ErrorMessage.getErrorName(result),
+                    ErrorMessage.getErrorValue(result));
             model.addAttribute("employee", employeeService.findByCode(code));
             return detail(code, model);
         }
