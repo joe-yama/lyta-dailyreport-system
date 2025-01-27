@@ -11,3 +11,5 @@ INSERT INTO daily_report_system.reports(report_date,title,content,employee_code,
      VALUES ("2023-09-23","田中　太郎の記載、タイトル","田中　太郎の記載、内容","2",0,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
 INSERT INTO daily_report_system.reports(report_date,title,content,employee_code,delete_flg,created_at,updated_at)
      VALUES ("2023-09-24","削除フラグtrueの日報タイトル","削除フラグtrueの日報タイトル","1",1,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+INSERT INTO daily_report_system.reports(report_date,title,content,employee_code,delete_flg,created_at,updated_at)
+     VALUES ("2023-09-25","複数行の内容の日報タイトル","これは複数行の\n日報です。","1",0,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
