@@ -44,6 +44,12 @@ public class ReportController {
         return "reports/list";
     }
 
+    @GetMapping(value = "/{id}/")
+    public String detail(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("report", reportService.findById(id));
+        return "reports/detail";
+    }
+
     @GetMapping(value = "/add")
     public String create(@ModelAttribute Report report,
             @AuthenticationPrincipal UserDetail userDetail, Model model) {
