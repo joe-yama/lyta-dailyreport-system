@@ -44,6 +44,10 @@ public class ReportService {
         return report;
     }
 
+    public List<Report> findByEmployee(Employee employee) {
+        return reportRepository.findByEmployee(employee);
+    }
+
     public boolean isCreatable(Employee employee, LocalDate reportDate) {
         Optional<Report> report =
                 reportRepository.findByEmployeeAndReportDate(employee, reportDate);
