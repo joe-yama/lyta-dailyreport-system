@@ -44,13 +44,28 @@ public class ReportService {
         return report;
     }
 
-    public boolean isReportAlreadyExist(Employee employee, LocalDate reportDate) {
+    public boolean isCreatable(Employee employee, LocalDate reportDate) {
         Optional<Report> report =
                 reportRepository.findByEmployeeAndReportDate(employee, reportDate);
-        if (report.isPresent()) {
-            return true;
-        }
-        return false;
+        return report.map(x -> false).orElse(true);
+    }
+
+    public boolean isUpdatable(Employee employee, LocalDate newReportDate, Report originalReport) {
+        Optional<Report> report =
+                reportRepository.findByEmployeeAndReportDate(employee, newReportDate);
+
+        boolean res = report
+                .map(x -> x.getReportDate().equals(originalReport.getReportDate()) ? true : false)
+                .orElse(true);
+        return res;
+    }
+
+    @Transactional
+    public ErrorKinds update(Report report) {
+        LocalDateTime now = LocalDateTime.now();
+        report.setUpdatedAt(now);
+        reportRepository.save(report);
+        return ErrorKinds.SUCCESS;
     }
 
 }
