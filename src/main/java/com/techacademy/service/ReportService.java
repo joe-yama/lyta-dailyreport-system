@@ -68,4 +68,14 @@ public class ReportService {
         return ErrorKinds.SUCCESS;
     }
 
+    @Transactional
+    public ErrorKinds delete(Integer id) {
+        Report report = findById(id);
+        LocalDateTime now = LocalDateTime.now();
+        report.setUpdatedAt(now);
+        report.setDeleteFlg(true);
+
+        return ErrorKinds.SUCCESS;
+    }
+
 }
