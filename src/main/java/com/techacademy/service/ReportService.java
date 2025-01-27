@@ -38,6 +38,12 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
+    public Report findById(Integer id) {
+        Optional<Report> option = reportRepository.findById(id);
+        Report report = option.orElse(null);
+        return report;
+    }
+
     public boolean isReportAlreadyExist(Employee employee, LocalDate reportDate) {
         Optional<Report> report =
                 reportRepository.findByEmployeeAndReportDate(employee, reportDate);
