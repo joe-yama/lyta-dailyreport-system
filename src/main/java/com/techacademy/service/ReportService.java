@@ -44,6 +44,10 @@ public class ReportService {
         return report;
     }
 
+    public List<Report> findByEmployee(Employee employee) {
+        return reportRepository.findByEmployee(employee);
+    }
+
     public boolean isCreatable(Employee employee, LocalDate reportDate) {
         Optional<Report> report =
                 reportRepository.findByEmployeeAndReportDate(employee, reportDate);
@@ -65,6 +69,16 @@ public class ReportService {
         LocalDateTime now = LocalDateTime.now();
         report.setUpdatedAt(now);
         reportRepository.save(report);
+        return ErrorKinds.SUCCESS;
+    }
+
+    @Transactional
+    public ErrorKinds delete(Integer id) {
+        Report report = findById(id);
+        LocalDateTime now = LocalDateTime.now();
+        report.setUpdatedAt(now);
+        report.setDeleteFlg(true);
+
         return ErrorKinds.SUCCESS;
     }
 
