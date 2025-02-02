@@ -1,6 +1,7 @@
 package com.techacademy.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import com.techacademy.constants.ErrorMessage;
 
 import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
+import com.techacademy.entity.Employee.Role;
 import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
 
@@ -33,10 +35,18 @@ public class ReportController {
 
     // 日報一覧画面
     @GetMapping
-    public String list(Model model) {
+    public String list(@AuthenticationPrincipal UserDetail userDetail, Model model) {
+        Employee currentUser = userDetail.getEmployee();
+        Role currentUserRole = currentUser.getRole();
 
-        model.addAttribute("listSize", reportService.findAll().size());
-        model.addAttribute("reportList", reportService.findAll());
+        List<Report> reportList;
+        if (currentUserRole.equals(Role.ADMIN)) {
+            reportList = reportService.findAll();
+        } else {
+            reportList = reportService.findByEmployee(currentUser);
+        }
+        model.addAttribute("reportList", reportList);
+        model.addAttribute("listSize", reportList.size());
 
         return "reports/list";
     }
